@@ -1,0 +1,156 @@
+image: registry.gitlab.com/mintel/satoshi/ci-cd/pipeline:latest
+
+variables:
+  BINARY_NAME: $CI_PROJECT_NAME
+  KUBE_DOMAIN: <your-website-name>.dev1
+
+stages:
+  - build
+  - test
+  - review
+  - staging
+  - canary
+  - production
+  - destroy-canary
+  - taglatest
+
+build:
+  tags: 
+    - mintel
+  stage: build 
+  services:
+    - docker:stable-dind
+  variables:
+    DOCKER_DRIVER: overlay2
+  script:
+    - command build
+  only:
+    - branches
+
+container_scanning:
+  tags:
+    - mintel
+  stage: test
+  variables:
+    DOCKER_DRIVER: overlay2
+  allow_failure: true
+  services:
+    - docker:stable-dind
+  script:
+    - command container_scan
+  artifacts:
+    paths: [gl-container-scanning-report.json]
+  except:
+    variables:
+      - $CONTAINER_SCANNING_DISABLED
+
+review:
+  tags: 
+    - mintel
+  stage: review
+  dependencies: []
+  script:
+    - command deploy
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    url: https://$CI_ENVIRONMENT_SLUG-$KUBE_DOMAIN
+    on_stop: stop_review
+  only:
+    - branches
+  except:
+    refs:
+      - master
+    variables:
+      - $REVIEW_DISABLED
+
+stop_review:
+  tags: 
+    - mintel
+  stage: review
+  dependencies: []
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - command destroy
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    action: stop
+  when: manual
+  only:
+    - branches
+  except:
+    refs:
+      - master
+    variables:
+      - $REVIEW_DISABLED
+
+staging:
+  tags:
+    - mintel
+  stage: staging
+  dependencies: []
+  script:
+    - command deploy
+  environment:
+    name: staging
+    url: https://staging-$KUBE_DOMAIN
+  only:
+    - master
+
+canary:
+  tags:
+    - mintel
+  stage: canary
+  dependencies: []
+  script:
+    - command deploy
+  environment:
+    name: production
+    url: https://$KUBE_DOMAIN
+  when: manual
+  allow_failure: false
+  only:
+    - master
+
+production:
+  tags:
+    - mintel
+  stage: production
+  dependencies: []
+  script:
+    - command deploy
+  environment:
+    name: production
+    url: https://$KUBE_DOMAIN
+  when: manual
+  allow_failure: false
+  only:
+    - master
+
+destroy-canary:
+  tags:
+    - mintel
+  stage: destroy-canary
+  dependencies: []
+  allow_failure: false
+  environment:
+    name: production  
+  script:
+    - command destroy-canary
+  only:
+    - master
+
+taglatest:
+  tags:
+    - mintel
+  services:
+    - docker:stable-dind
+  variables:
+    DOCKER_DRIVER: overlay2
+  stage: taglatest
+  dependencies: []
+  allow_failure: false
+  script:
+    - command push
+  only:
+    - master
