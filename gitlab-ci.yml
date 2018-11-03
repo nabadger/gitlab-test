@@ -5,7 +5,6 @@
 .build_template:
   tags: 
     - *CI_PIPELINE_AGENT_TAG
-  stage: build 
   services:
     - docker:stable-dind
   variables:
