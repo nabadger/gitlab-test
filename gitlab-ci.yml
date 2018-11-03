@@ -6,7 +6,6 @@ variables:
 
 stages:
   - build
-  - test
   - review
   - staging
   - canary
@@ -31,7 +30,6 @@ container_scanning:
   tags:
     - $CI_PIPELINE_AGENT_TAG
   stage: build 
-  stage: test
   variables:
     DOCKER_DRIVER: overlay2
   allow_failure: true
