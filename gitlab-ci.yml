@@ -1,7 +1,8 @@
 .common:
-  tags: &tags
-    - mintel
-  docker: &docker
+  tags_template: &tags
+    tags:
+      - mintel
+  docker_template: &docker
     services: 
       - docker:stable-dind
     variables:
@@ -9,7 +10,7 @@
 
 .build_template:
   <<: *tags
-  #  <<: *docker
+  <<: *docker
   stage: 
     build
   script:
