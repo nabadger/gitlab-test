@@ -4,15 +4,15 @@ variables:
   BINARY_NAME: $CI_PROJECT_NAME
   KUBE_DOMAIN: $SITE_HOST:$SITE_DOMAIN
 
-stages:
-  - build
-  - scan 
-  - review
-  - staging
-  - canary
-  - production
-  - destroy-canary
-  - taglatest
+  #stages:
+  #- build
+  #- scan 
+  #- review
+  #- staging
+  #- canary
+  #- production
+  #- destroy-canary
+  #- taglatest
 
 build:
   tags: 
