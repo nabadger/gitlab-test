@@ -5,7 +5,7 @@ variables:
 
 .common:
   tags:
-    - &CI_PIPELINE_AGENT_TAG $CI_PIPELINE_AGENT_TAG
+    - &CI_PIPELINE_AGENT_TAG mintel
 
 .build:
   tags: 
