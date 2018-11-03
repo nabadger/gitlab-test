@@ -2,7 +2,6 @@ image: $CI_PIPELINE_IMAGE:$CI_PIPELINE_TAG
 
 variables:
   BINARY_NAME: $CI_PROJECT_NAME
-  KUBE_DOMAIN: $SITE_HOST:$SITE_DOMAIN
 
   #stages:
   #- build
