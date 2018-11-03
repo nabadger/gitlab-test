@@ -1,28 +1,32 @@
 .common:
-  tags_template: &tags
-    tags:
-      - $TAG
-  docker_template: &docker
+  tags:
+    - &CI_PIPELINE_AGENT_TAG mintel
+  docker: &docker
     services: 
       - docker:stable-dind
     variables:
       DOCKER_DRIVER: overlay2
 
 .build_template:
-  <<: *tags
-  <<: *docker
+  tags: 
+    - *CI_PIPELINE_AGENT_TAG
   stage: 
     build
+  <<: *docker
   script:
     - command build
   only:
     - branches
 
 .container_scan_template:
-  <<: *tags
-  <<: *docker
+  tags:
+    - *CI_PIPELINE_AGENT_TAG
   stage: test
+  variables:
+    DOCKER_DRIVER: overlay2
   allow_failure: true
+  services:
+    - docker:stable-dind
   script:
     - command container_scan
   artifacts:
@@ -32,7 +36,8 @@
       - $CONTAINER_SCANNING_DISABLED
 
 .review_template:
-  <<: *tags
+  tags: 
+    - *CI_PIPELINE_AGENT_TAG
   stage: review
   dependencies: []
   script:
@@ -50,7 +55,8 @@
       - $REVIEW_DISABLED
 
 .review_stop_template:
-  <<: *tags
+  tags: 
+    - *CI_PIPELINE_AGENT_TAG
   stage: review
   dependencies: []
   variables:
@@ -70,7 +76,8 @@
       - $REVIEW_DISABLED
 
 .staging_template:
-  <<: *tags
+  tags:
+    - *CI_PIPELINE_AGENT_TAG
   stage: staging
   dependencies: []
   script:
@@ -82,7 +89,8 @@
     - master
 
 .canary_template:
-  <<: *tags
+  tags:
+    - *CI_PIPELINE_AGENT_TAG
   stage: canary
   dependencies: []
   script:
@@ -96,7 +104,8 @@
     - master
 
 .production_template:
-  <<: *tags
+  tags:
+    - *CI_PIPELINE_AGENT_TAG
   stage: production
   dependencies: []
   script:
@@ -110,7 +119,8 @@
     - master
 
 .canary_destroy_template:
-  <<: *tags
+  tags:
+    - *CI_PIPELINE_AGENT_TAG
   stage: canary_destroy
   dependencies: []
   allow_failure: false
@@ -122,9 +132,13 @@
     - $CI_PIPELINE_AGENT_TAG
 
 .tag_latest_template:
-  <<: *tags
-  <<: *docker
-  stage: tag_latest
+  tags:
+    - *CI_PIPELINE_AGENT_TAG
+  services:
+    - docker:stable-dind
+  variables:
+    DOCKER_DRIVER: overlay2
+  stage: taglatest
   dependencies: []
   allow_failure: false
   script:
