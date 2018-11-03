@@ -1,6 +1,6 @@
 .common:
-  tags:
-    - &CI_PIPELINE_AGENT_TAG mintel
+  tags: &tags
+    - mintel
   docker: &docker
     services: 
       - docker:stable-dind
@@ -8,25 +8,20 @@
       DOCKER_DRIVER: overlay2
 
 .build_template:
-  tags: 
-    - *CI_PIPELINE_AGENT_TAG
+  <<: *tags
+  <<: *docker
   stage: 
     build
-  <<: *docker
   script:
     - command build
   only:
     - branches
 
 .container_scan_template:
-  tags:
-    - *CI_PIPELINE_AGENT_TAG
+  <<: *tags
+  <<: *docker
   stage: test
-  variables:
-    DOCKER_DRIVER: overlay2
   allow_failure: true
-  services:
-    - docker:stable-dind
   script:
     - command container_scan
   artifacts:
@@ -36,8 +31,7 @@
       - $CONTAINER_SCANNING_DISABLED
 
 .review_template:
-  tags: 
-    - *CI_PIPELINE_AGENT_TAG
+  <<: *tags
   stage: review
   dependencies: []
   script:
@@ -55,8 +49,7 @@
       - $REVIEW_DISABLED
 
 .review_stop_template:
-  tags: 
-    - *CI_PIPELINE_AGENT_TAG
+  <<: *tags
   stage: review
   dependencies: []
   variables:
@@ -76,8 +69,7 @@
       - $REVIEW_DISABLED
 
 .staging_template:
-  tags:
-    - *CI_PIPELINE_AGENT_TAG
+  <<: *tags
   stage: staging
   dependencies: []
   script:
@@ -89,8 +81,7 @@
     - master
 
 .canary_template:
-  tags:
-    - *CI_PIPELINE_AGENT_TAG
+  <<: *tags
   stage: canary
   dependencies: []
   script:
@@ -104,8 +95,7 @@
     - master
 
 .production_template:
-  tags:
-    - *CI_PIPELINE_AGENT_TAG
+  <<: *tags
   stage: production
   dependencies: []
   script:
@@ -119,8 +109,7 @@
     - master
 
 .canary_destroy_template:
-  tags:
-    - *CI_PIPELINE_AGENT_TAG
+  <<: *tags
   stage: canary_destroy
   dependencies: []
   allow_failure: false
@@ -132,13 +121,9 @@
     - $CI_PIPELINE_AGENT_TAG
 
 .tag_latest_template:
-  tags:
-    - *CI_PIPELINE_AGENT_TAG
-  services:
-    - docker:stable-dind
-  variables:
-    DOCKER_DRIVER: overlay2
-  stage: taglatest
+  <<: *tags
+  <<: *docker
+  stage: tag_latest
   dependencies: []
   allow_failure: false
   script:
