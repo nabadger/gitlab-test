@@ -19,7 +19,7 @@ image: $CI_PIPELINE_IMAGE:$CI_PIPELINE_TAG
 
 .container_scanning:
   tags:
-    - $CI_PIPELINE_AGENT_TAG
+    - *CI_PIPELINE_AGENT_TAG
   stage: scan 
   variables:
     DOCKER_DRIVER: overlay2
@@ -36,7 +36,7 @@ image: $CI_PIPELINE_IMAGE:$CI_PIPELINE_TAG
 
 .review:
   tags: 
-    - $CI_PIPELINE_AGENT_TAG
+    - *CI_PIPELINE_AGENT_TAG
   stage: review
   dependencies: []
   script:
@@ -55,7 +55,7 @@ image: $CI_PIPELINE_IMAGE:$CI_PIPELINE_TAG
 
 .stop_review:
   tags: 
-    - $CI_PIPELINE_AGENT_TAG
+    - *CI_PIPELINE_AGENT_TAG
   stage: review
   dependencies: []
   variables:
@@ -76,7 +76,7 @@ image: $CI_PIPELINE_IMAGE:$CI_PIPELINE_TAG
 
 .staging:
   tags:
-    - $CI_PIPELINE_AGENT_TAG
+    - *CI_PIPELINE_AGENT_TAG
   stage: staging
   dependencies: []
   script:
@@ -89,7 +89,7 @@ image: $CI_PIPELINE_IMAGE:$CI_PIPELINE_TAG
 
 .canary:
   tags:
-    - $CI_PIPELINE_AGENT_TAG
+    - *CI_PIPELINE_AGENT_TAG
   stage: canary
   dependencies: []
   script:
@@ -104,7 +104,7 @@ image: $CI_PIPELINE_IMAGE:$CI_PIPELINE_TAG
 
 .production:
   tags:
-    - $CI_PIPELINE_AGENT_TAG
+    - *CI_PIPELINE_AGENT_TAG
   stage: production
   dependencies: []
   script:
@@ -119,7 +119,7 @@ image: $CI_PIPELINE_IMAGE:$CI_PIPELINE_TAG
 
 .destroy-canary:
   tags:
-    - $CI_PIPELINE_AGENT_TAG
+    - *CI_PIPELINE_AGENT_TAG
   stage: destroy-canary
   dependencies: []
   allow_failure: false
@@ -132,7 +132,7 @@ image: $CI_PIPELINE_IMAGE:$CI_PIPELINE_TAG
 
 .taglatest:
   tags:
-    - $CI_PIPELINE_AGENT_TAG
+    - *CI_PIPELINE_AGENT_TAG
   services:
     - docker:stable-dind
   variables:
