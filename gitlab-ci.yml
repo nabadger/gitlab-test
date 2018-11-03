@@ -16,7 +16,7 @@ variables:
 
 build:
   tags: 
-    - $CI_PIPELINE_AGENT_TAG
+    - mintel
   stage: build 
   services:
     - docker:stable-dind
