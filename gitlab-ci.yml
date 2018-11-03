@@ -1,21 +1,8 @@
 image: $CI_PIPELINE_IMAGE:$CI_PIPELINE_TAG
 
-variables:
-  BINARY_NAME: $CI_PROJECT_NAME
-
-  #stages:
-  #- build
-  #- scan 
-  #- review
-  #- staging
-  #- canary
-  #- production
-  #- destroy-canary
-  #- taglatest
-
-build:
+.build:
   tags: 
-    - mintel
+    - $CI_PIPELINE_AGENT_TAG
   stage: build 
   services:
     - docker:stable-dind
@@ -26,7 +13,7 @@ build:
   only:
     - branches
 
-container_scanning:
+.container_scanning:
   tags:
     - $CI_PIPELINE_AGENT_TAG
   stage: scan 
@@ -43,7 +30,7 @@ container_scanning:
     variables:
       - $CONTAINER_SCANNING_DISABLED
 
-review:
+.review:
   tags: 
     - $CI_PIPELINE_AGENT_TAG
   stage: review
@@ -62,7 +49,7 @@ review:
     variables:
       - $REVIEW_DISABLED
 
-stop_review:
+.stop_review:
   tags: 
     - $CI_PIPELINE_AGENT_TAG
   stage: review
@@ -83,7 +70,7 @@ stop_review:
     variables:
       - $REVIEW_DISABLED
 
-staging:
+.staging:
   tags:
     - $CI_PIPELINE_AGENT_TAG
   stage: staging
@@ -96,7 +83,7 @@ staging:
   only:
     - master
 
-canary:
+.canary:
   tags:
     - $CI_PIPELINE_AGENT_TAG
   stage: canary
@@ -111,7 +98,7 @@ canary:
   only:
     - master
 
-production:
+.production:
   tags:
     - $CI_PIPELINE_AGENT_TAG
   stage: production
@@ -126,7 +113,7 @@ production:
   only:
     - master
 
-destroy-canary:
+.destroy-canary:
   tags:
     - $CI_PIPELINE_AGENT_TAG
   stage: destroy-canary
@@ -139,7 +126,7 @@ destroy-canary:
   only:
     - $CI_PIPELINE_AGENT_TAG
 
-taglatest:
+.taglatest:
   tags:
     - $CI_PIPELINE_AGENT_TAG
   services:
