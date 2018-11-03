@@ -15,7 +15,7 @@
   only:
     - branches
 
-.container_scanning_template:
+.container_scan_template:
   tags:
     - *CI_PIPELINE_AGENT_TAG
   stage: scan 
