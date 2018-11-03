@@ -118,7 +118,7 @@
 .canary_destroy_template:
   tags:
     - *CI_PIPELINE_AGENT_TAG
-  stage: destroy-canary
+  stage: canary_destroy
   dependencies: []
   allow_failure: false
   environment:
