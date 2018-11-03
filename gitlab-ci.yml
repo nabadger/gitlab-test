@@ -1,8 +1,8 @@
-image: registry.gitlab.com/mintel/satoshi/ci-cd/pipeline:latest
+image: $CI_PIPELINE_IMAGE:$CI_PIPELINE_TAG
 
 variables:
   BINARY_NAME: $CI_PROJECT_NAME
-  KUBE_DOMAIN: <your-website-name>.dev1
+  KUBE_DOMAIN: $SITE_HOST:$SITE_DOMAIN
 
 stages:
   - build
@@ -16,7 +16,7 @@ stages:
 
 build:
   tags: 
-    - mintel
+    - $CI_PIPELINE_AGENT_TAG
   stage: build 
   services:
     - docker:stable-dind
@@ -29,7 +29,8 @@ build:
 
 container_scanning:
   tags:
-    - mintel
+    - $CI_PIPELINE_AGENT_TAG
+  stage: build 
   stage: test
   variables:
     DOCKER_DRIVER: overlay2
@@ -46,7 +47,7 @@ container_scanning:
 
 review:
   tags: 
-    - mintel
+    - $CI_PIPELINE_AGENT_TAG
   stage: review
   dependencies: []
   script:
@@ -65,7 +66,7 @@ review:
 
 stop_review:
   tags: 
-    - mintel
+    - $CI_PIPELINE_AGENT_TAG
   stage: review
   dependencies: []
   variables:
@@ -86,7 +87,7 @@ stop_review:
 
 staging:
   tags:
-    - mintel
+    - $CI_PIPELINE_AGENT_TAG
   stage: staging
   dependencies: []
   script:
@@ -99,7 +100,7 @@ staging:
 
 canary:
   tags:
-    - mintel
+    - $CI_PIPELINE_AGENT_TAG
   stage: canary
   dependencies: []
   script:
@@ -114,7 +115,7 @@ canary:
 
 production:
   tags:
-    - mintel
+    - $CI_PIPELINE_AGENT_TAG
   stage: production
   dependencies: []
   script:
@@ -129,7 +130,7 @@ production:
 
 destroy-canary:
   tags:
-    - mintel
+    - $CI_PIPELINE_AGENT_TAG
   stage: destroy-canary
   dependencies: []
   allow_failure: false
@@ -138,11 +139,11 @@ destroy-canary:
   script:
     - command destroy-canary
   only:
-    - master
+    - $CI_PIPELINE_AGENT_TAG
 
 taglatest:
   tags:
-    - mintel
+    - $CI_PIPELINE_AGENT_TAG
   services:
     - docker:stable-dind
   variables:
