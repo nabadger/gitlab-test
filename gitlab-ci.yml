@@ -1,10 +1,8 @@
-image: $CI_PIPELINE_IMAGE:$CI_PIPELINE_TAG
-
 .common:
   tags:
     - &CI_PIPELINE_AGENT_TAG mintel
 
-.build:
+.build_template:
   tags: 
     - *CI_PIPELINE_AGENT_TAG
   stage: build 
@@ -17,7 +15,7 @@ image: $CI_PIPELINE_IMAGE:$CI_PIPELINE_TAG
   only:
     - branches
 
-.container_scanning:
+.container_scanning_template:
   tags:
     - *CI_PIPELINE_AGENT_TAG
   stage: scan 
@@ -34,7 +32,7 @@ image: $CI_PIPELINE_IMAGE:$CI_PIPELINE_TAG
     variables:
       - $CONTAINER_SCANNING_DISABLED
 
-.review:
+.review_template:
   tags: 
     - *CI_PIPELINE_AGENT_TAG
   stage: review
@@ -44,7 +42,7 @@ image: $CI_PIPELINE_IMAGE:$CI_PIPELINE_TAG
   environment:
     name: review/$CI_COMMIT_REF_NAME
     url: https://$CI_ENVIRONMENT_SLUG-$KUBE_DOMAIN
-    on_stop: stop_review
+    on_stop: review_stop
   only:
     - branches
   except:
@@ -53,7 +51,7 @@ image: $CI_PIPELINE_IMAGE:$CI_PIPELINE_TAG
     variables:
       - $REVIEW_DISABLED
 
-.stop_review:
+.review_stop_template:
   tags: 
     - *CI_PIPELINE_AGENT_TAG
   stage: review
@@ -74,7 +72,7 @@ image: $CI_PIPELINE_IMAGE:$CI_PIPELINE_TAG
     variables:
       - $REVIEW_DISABLED
 
-.staging:
+.staging_template:
   tags:
     - *CI_PIPELINE_AGENT_TAG
   stage: staging
@@ -87,7 +85,7 @@ image: $CI_PIPELINE_IMAGE:$CI_PIPELINE_TAG
   only:
     - master
 
-.canary:
+.canary_template:
   tags:
     - *CI_PIPELINE_AGENT_TAG
   stage: canary
@@ -102,7 +100,7 @@ image: $CI_PIPELINE_IMAGE:$CI_PIPELINE_TAG
   only:
     - master
 
-.production:
+.production_template:
   tags:
     - *CI_PIPELINE_AGENT_TAG
   stage: production
@@ -117,7 +115,7 @@ image: $CI_PIPELINE_IMAGE:$CI_PIPELINE_TAG
   only:
     - master
 
-.destroy-canary:
+.canary_destroy_template:
   tags:
     - *CI_PIPELINE_AGENT_TAG
   stage: destroy-canary
@@ -130,7 +128,7 @@ image: $CI_PIPELINE_IMAGE:$CI_PIPELINE_TAG
   only:
     - $CI_PIPELINE_AGENT_TAG
 
-.taglatest:
+.tag_latest_template:
   tags:
     - *CI_PIPELINE_AGENT_TAG
   services:
