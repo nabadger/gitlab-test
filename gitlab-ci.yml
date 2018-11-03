@@ -1,14 +1,18 @@
 .common:
   tags:
     - &CI_PIPELINE_AGENT_TAG mintel
+  docker: &docker
+    services: 
+      - docker:stable-dind
+    variables:
+      DOCKER_DRIVER: overlay2
 
 .build_template:
   tags: 
     - *CI_PIPELINE_AGENT_TAG
-  services:
-    - docker:stable-dind
-  variables:
-    DOCKER_DRIVER: overlay2
+  stage: 
+    build
+  <<: *docker
   script:
     - command build
   only:
@@ -17,7 +21,7 @@
 .container_scan_template:
   tags:
     - *CI_PIPELINE_AGENT_TAG
-  stage: scan 
+  stage: test
   variables:
     DOCKER_DRIVER: overlay2
   allow_failure: true
