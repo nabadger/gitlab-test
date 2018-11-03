@@ -1,5 +1,8 @@
 image: $CI_PIPELINE_IMAGE:$CI_PIPELINE_TAG
 
+variables:
+  CI_PIPELINE_AGENT_TAG: $CI_PIPELINE_AGENT_TAG
+
 .build:
   tags: 
     - $CI_PIPELINE_AGENT_TAG
