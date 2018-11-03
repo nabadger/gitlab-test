@@ -1,7 +1,7 @@
 .common:
   tags_template: &tags
     tags:
-      - $TAG
+      - $GITLAB_RUNNER_TAG
   docker_template: &docker
     services: 
       - docker:stable-dind
