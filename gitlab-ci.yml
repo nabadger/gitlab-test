@@ -9,7 +9,7 @@
 
 .build_template:
   <<: *tags
-  <<: *docker
+  #  <<: *docker
   stage: 
     build
   script:
